@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <h1>Login</h1>
+
+            <form action="/login" method="post">
+                <div class="mt-3">
+                    <label for="email-id" class="form-label">Email address</label>
+                    <input name="email" type="email" class="form-control" id="email-id">
+                </div>
+
+                <div class="mt-3">
+                    <label for="password-id" class="form-label">Password</label>
+                    <input name="password" type="password" class="form-control" id="password-id">
+                </div>
+                
+                <div class="text-end">
+                <a href="/password-recovery">Forgot password?</a>
+                </div>     
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="/register">I don't have an account yet</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col">
+
+        </div>
+    </div>
+    
+</div>
+
+
+
+{% endblock %}
