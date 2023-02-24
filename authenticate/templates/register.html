@@ -9,27 +9,58 @@
         <div class="col-4">
             <h1>Register</h1>
             
-            <form action="/register" method="post">
+            <form action="/register" method="POST">
                 {% csrf_token %}
                 <div class="mt-3">
+                  
                     <label for="username-id" class="form-label">Username</label>
-                    <input name="username" type="text" class="form-control" id="username-id">
+                    <input 
+                        name="username"
+                        value="{{ username }}" 
+                        type="text" 
+                        class="form-control {% if errors.username %}is-invalid {% endif %}" 
+                        id="username-id"
+                        aria-describedby="username-feedback-id">
+
+
+                    {% if errors.username %}
+                    <div id="username-feedback-id" class="invalid-feedback">
+                        {{ errors.username }}
+                    </div>
+                    {% endif %}
+                    
+                        
                 </div>
 
         
                 <div class="mt-3">
                     <label for="email-id" class="form-label">Email address</label>
-                    <input name="email" type="email" class="form-control" id="email-id">
+                    <input value="{{ email }}" name="email" type="email" class="form-control" id="email-id">
                 </div>
 
                 <div class="mt-3">
                     <label for="password-id" class="form-label">Password</label>
-                    <input name="password" type="password" class="form-control" id="password-id">
+                    <input  name="password" type="password" class="form-control {% if errors.password %}is-invalid {% endif %}" id="password-id" aria-describedby="password-feedback-id">
+                    {% if errors.password %}
+                    <div id="password-feedback-id" class="invalid-feedback">
+                        {{ errors.password }}
+                        </div>
+                    {% endif %}
                 </div>
+
+               
                 
                 <div class="mt-3">
                     <label for="confirm-password-id" class="form-label">Confirm password</label>
-                    <input name="confirm-password" type="password" class="form-control" id="confirm-password-id">
+                    <input name="confirm-password" 
+                    type="password" 
+                    aria-describedby="confirm-password-feedback-id"
+                    class="form-control {% if errors.confirm_password %}is-invalid {% endif %}" id="confirm-password-id">
+                    {% if errors.confirm_password %}
+                    <div id="confirm-password-feedback-id" class="invalid-feedback">
+                        {{ errors.confirm_password }}
+                        </div>
+                    {% endif %}
                 </div>
 
                 <div class="mt-3">
@@ -37,7 +68,7 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="/login">I already have an account</a>
+                    <span>I already have an account. <a href="/login">click here</a></span>
                 </div>
             </form>
         </div>
