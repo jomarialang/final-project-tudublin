@@ -2,15 +2,52 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from services.mailgun import send_token
 from django.utils.encoding import force_str
+from django.contrib.auth import authenticate, login
+
+def login_view(request): 
+    errors = {}
+    username = request.POST.get('username') or ''
+    password = request.POST.get('password') 
+    
+    if request.method == 'POST': 
+        
+
+        print(username, password)
+
+        if username == '': 
+
+            errors['username'] = "Username is required!"
+        
+        
+        if password == '': 
+
+            errors['password'] = "Password is required!"
+        elif len(password) < 17: 
+
+            errors['password'] = 'Password must be at least 16 characters!'
+
+        
+    if not bool(errors):
+        
+        user = authenticate(request, username=username, password=password)
+        if user is not None: 
+            login(request, user)
+
+            return redirect('/dashboard')
+        else: 
+
+            pass
+
+    context = {
+        'errors': errors
+    }        
+
+    return render(request, 'login.html', context)
 
 
-def login(request): 
-    return render(request, 'login.html')
 
 
-
-
-def register(request): 
+def register_view(request): 
     errors = {}
     username = request.POST.get('username') or ''
     email = request.POST.get('email') or ''
@@ -42,7 +79,7 @@ def register(request):
 
             errors['password'] = 'Password is required!'
 
-        elif len(password) <= 16: 
+        elif len(password) < 17: 
 
             errors['password'] = 'Password must be at least 16 characters!'
 
@@ -59,13 +96,22 @@ def register(request):
 
 
         if not bool(errors): 
+
+            
+            # No errors occured. Run the code below.
+            
+
             new_user = User(email=email, username=username)
             new_user.is_staff = True
             new_user.set_password(password)
-
-            send_token(new_user, email)
+            new_user.save()
             
-            return redirect('/register/success')
+            context = { 
+                'username': username, 
+                'email': email
+            }
+
+            return render(request, 'register_success.html', context)
 
 
     context = { 
