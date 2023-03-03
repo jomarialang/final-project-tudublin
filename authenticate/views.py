@@ -2,8 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from services.mailgun import send_token
 from django.utils.encoding import force_str
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.views.decorators.http import require_http_methods
+from decorators import auth
 
+@auth.is_authenticated
+@require_http_methods(["GET", "POST"])
 def login_view(request): 
     errors = {}
     username = request.POST.get('username') or ''
@@ -11,33 +16,33 @@ def login_view(request):
     
     if request.method == 'POST': 
         
-
-        print(username, password)
-
         if username == '': 
 
             errors['username'] = "Username is required!"
         
-        
         if password == '': 
 
             errors['password'] = "Password is required!"
+        
         elif len(password) < 17: 
 
             errors['password'] = 'Password must be at least 16 characters!'
 
         
-    if not bool(errors):
-        
-        user = authenticate(request, username=username, password=password)
-        if user is not None: 
-            login(request, user)
+        if not bool(errors):
+            
+            user = authenticate(request, username=username, password=password)
 
-            return redirect('/dashboard')
-        else: 
+            
+            if user is not None: 
+                login(request, user)
 
-            pass
+                return redirect('/dashboard')
+            else: 
 
+              
+                errors['username'] = 'Username or Password is invalid!'
+            
     context = {
         'errors': errors
     }        
@@ -46,7 +51,7 @@ def login_view(request):
 
 
 
-
+@require_http_methods(["GET", "POST"])
 def register_view(request): 
     errors = {}
     username = request.POST.get('username') or ''
@@ -133,7 +138,7 @@ def register_success(request):
 
 
 def activate(request, uid64, token): 
-    print("activated")
+    
     """
     The code below was roughly taken from the website pylessons. 
     Website: https://pylessons.com/
@@ -147,3 +152,10 @@ def activate(request, uid64, token):
     except: 
         pass
     return redirect('dashboard')
+
+
+def logout_view(request): 
+
+    logout(request)
+    messages.add_message(request, messages.INFO, "You have logged out of your account!")
+    return redirect('login')

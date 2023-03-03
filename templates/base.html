@@ -16,19 +16,50 @@
             <a class="navbar-brand" href="/">Recipe Planner</a>
             
             <ul class="navbar-nav">
-                {% if request.path != '/login' %}
-                    <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
-                {% endif %}
-                {% if request.path != '/register' %}
-                <li class="nav-item"><a href="/register" class="nav-link">Register</a></li>
+                {% if not user.is_authenticated %}
+                    {% if request.path != '/login' %}
+                        <li class="nav-item"><a href="/login" class="nav-link">Login</a></li>
+                    {% endif %}
+                    {% if request.path != '/register' %}
+                    <li class="nav-item"><a href="/register" class="nav-link">Register</a></li>
+                    {% endif %}
+                    {% else %}
+
+                    <div class="dropdown">
+                        <a class="btn btn-link dropdown-toggle" role="button" data-bs-toggle="dropdown">{{ user.username }}</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+
+                    
+                    
                 {% endif %}
                 
             </ul>
         </div>
     </nav>
+
+    
     <main class="mt-4">
+        <div class="container">
+            {% if messages %}
+            
+                {% for message in messages %}
+                
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+
+                    <div class="alert alert-warning" role="alert">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+        
+            {% endif %}
+        
     {% block content %}
     {% endblock %}
+</div>
     </main>
 </body>
 </html>
